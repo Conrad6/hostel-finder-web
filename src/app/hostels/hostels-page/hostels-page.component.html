@@ -1,0 +1,92 @@
+<div class="container">
+  <ng-template #noContent>
+    <div class="alert alert-info">Loading...</div>
+  </ng-template>
+  <div id="hostelsContainer" class="card-columns" *ngIf="hostels$ | async">
+    <ng-container *ngIf="hostels$ | async as hostels">
+      <div class="card" *ngFor="let hostel of hostels">
+        <ng-container *ngIf="hostel.Images && hostel.Images.length > 0">
+          <img
+            (error)="imageLoadError('hostel_image' + hostel.Id)"
+            (load)="imageLoad($event)"
+            [id]="'hostel_image' + hostel.Id"
+            class="card-img-top"
+            [src]="hostel.Images[0]"
+            [alt]="hostel.Name"
+            loading="lazy"
+          />
+        </ng-container>
+        <ng-container>
+          <div class="card-body">
+            <h4 class="card-title">
+              <a class="text-dark" routerLink="/hostels/{{ hostel.Id }}">{{
+                hostel.Name
+              }}</a>
+            </h4>
+            <ng-container
+              *ngIf="hostel.Description && hostel.Description !== ''"
+            >
+              <hr />
+              <label
+                *ngIf="hostel.Description.length < 250"
+                for="hostel_{{ hostel.Id }}"
+                class="d-block"
+                >Description</label
+              >
+              <p
+                id="hostel_{{ hostel.Id }}"
+                class="hostel-description card-text text-muted"
+              >
+                {{ hostel.Description | slice: 0:250 }}
+              </p>
+            </ng-container>
+            <ng-container>
+              <hr />
+              <div
+                class="d-flex flex-column my-2 justify-content-around align-items-center"
+              >
+                <a
+                  target="_blank"
+                  href="http://www.google.com/maps/place/{{
+                    hostel.Latitude
+                  }},{{ hostel.Longitude }}"
+                  class="card-link mb-2"
+                  ><b class="fas fa-map-marker-alt"></b
+                ></a>
+                <div class="d-flex mb-2 flex-column text-center">
+                  <a href="!" class="card-link"
+                    ><b
+                      class="fas fa-phone"
+                      style="transform: rotateZ(-95deg)"
+                    ></b
+                  ></a>
+                  <small class="text-muted">{{ hostel.ContactPhone }}</small>
+                </div>
+                <div class="d-flex mb-2 flex-column text-center">
+                  <a href="mailto:{{ hostel.ContactEmail }}" class="card-text"
+                    ><b class="fas fa-at"></b
+                  ></a>
+                  <small class="text-muted">{{ hostel.ContactEmail }}</small>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+        <div class="card-footer text-center text-muted"><span class="small">{{hostel.DateAdded|date:'longDate'}}</span></div>
+      </div>
+    </ng-container>
+  </div>
+  <div
+    id="load-trigger"
+    class="d-flex justify-content-center align-items-center"
+  >
+    <span
+      *ngIf="batchFetching"
+      title="Loading"
+      class="spinner-grow spinner-grow-sm"
+      role="status"
+      aria-hidden="true"
+      ><span class="sr-only">Loading...</span></span
+    >
+  </div>
+</div>
